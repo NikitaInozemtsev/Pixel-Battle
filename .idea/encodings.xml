@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/src/main/java/serv/service/Antology.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/java/serv/service/Author.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/java/serv/service/Book.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/java/serv/service/Library.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/java/serv/service/LiveMetrics.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/java/serv/service/Note.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/java/serv/service/NotificationDesk.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/java/serv/service/RunApp.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/java/serv/service/WebServiceConfig.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/java/serv/service/myPetSOAPService.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/java/serv/service/petLife.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/java/serv/service/restfull.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/application.properties" charset="windows-1251" />
+    <file url="PROJECT" charset="windows-1251" />
+  </component>
+</project>
