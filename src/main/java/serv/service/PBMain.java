@@ -1,5 +1,7 @@
 package serv.service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import serv.dbase.DataBase;
 import org.springframework.stereotype.Service;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -10,8 +12,10 @@ import java.sql.SQLException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-@XmlRootElement(name = "Serv")
-@Service
+//@XmlRootElement(name = "Serv")
+//@Service
+
+
 public class PBMain {
 
     @Autowired
@@ -65,7 +69,7 @@ public class PBMain {
 
     /**
      *
-     * @param order Команда, содержащая информацию о пикселе
+     * @param color Команда, содержащая информацию о пикселе
      * @return Признак успеха
      */
     public boolean insert(String color, int x, int y ) {
