@@ -14,6 +14,7 @@ import java.sql.Array;
 @Controller
 public class PBSOAPService {
 
+
 	private PBMain basetalker;
 
 	/**
@@ -21,8 +22,8 @@ public class PBSOAPService {
 	 * @param basetalker Установка сервиса
 	 */
 
-	public PBSOAPService(@Autowired PBMain basetalker) {
-		this.basetalker = basetalker;
+	public PBSOAPService( ){
+		this.basetalker = new PBMain();
 	}
 
 	/**

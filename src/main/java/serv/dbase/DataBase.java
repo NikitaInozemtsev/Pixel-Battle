@@ -7,7 +7,7 @@ import java.util.Collections;
 
 public class DataBase implements Closeable {
 
-    private static final String DB_URL = "jdbc:postgresql://:5432/postgres";
+    private static final String DB_URL = "jdbc:postgresql://10.10.10.142:5432/backtosch";
     private static final String user = "lvovtr";
     private static final String password = "Tjed_913";
     private static boolean isBase;
@@ -26,7 +26,7 @@ public class DataBase implements Closeable {
             Connection connection = DriverManager.getConnection(DB_URL, user, password);
             System.out.println("Соединение с БД выполнено.");
             Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery("select color from colors");
+            ResultSet rs = st.executeQuery("select color from public.colores");
             if (!rs.next()) {
                 System.out.println("База данных пуста, первичное заполнение");
                 String arr = "{";
@@ -49,7 +49,7 @@ public class DataBase implements Closeable {
                 }
                 arr += "}";
                 System.out.println(arr);
-                st.executeUpdate("INSERT INTO colors (color) VALUES ('" + arr + "');");
+                st.executeUpdate("INSERT INTO public.colores (color) VALUES ('" + arr + "');");
 
             }
             isBase = true;
@@ -89,7 +89,7 @@ public class DataBase implements Closeable {
         Array res = null;
         ResultSet rs = null;
         try {
-            rs = connection.createStatement().executeQuery("select color from colors");
+            rs = connection.createStatement().executeQuery("select color from public.colores");
             if(rs.next()) {
                 res = rs.getArray(1);
             }
@@ -107,6 +107,6 @@ public class DataBase implements Closeable {
      * @throws SQLException Бросает исключение, если нет подключения
      */
     public void insertPixel(String color, int x, int y) throws SQLException {
-        connection.createStatement().executeUpdate("UPDATE colors SET color[" + x + "][" + y + "]='" + color +"'");
+        connection.createStatement().executeUpdate("UPDATE public.colores SET color[" + x + "][" + y + "]='" + color +"'");
     }
 }
