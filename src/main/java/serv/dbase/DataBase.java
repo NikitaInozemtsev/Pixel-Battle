@@ -1,79 +1,53 @@
 package serv.dbase;
 
-import java.io.Closeable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import java.sql.*;
-import java.util.Arrays;
-import java.util.Collections;
 
-public class DataBase implements Closeable {
+public class DataBase {
 
-    private static final String DB_URL = "jdbc:postgresql://10.10.10.142:5432/backtosch";
-    private static final String user = "lvovtr";
-    private static final String password = "Tjed_913";
-    private static boolean isBase;
-    private final Connection connection;
+    private String DB_URL;
+    private String user;
+    private String password;
+    private Connection connection = null;
 
     /**
      *
-     * @return Создает соединение с БД
-     * @throws SQLException Бросает исключение, если не получилось
+     *
      */
-    public static DataBase createConnection() throws SQLException {
-        if (!isBase) {
+    public void createConnection(){
+        try {
             //Проверяем наличие JDBC драйвера для работы с БД
             DriverManager.registerDriver(new org.postgresql.Driver());
             //Попытка установить соединение с базой данных
-            Connection connection = DriverManager.getConnection(DB_URL, user, password);
+            connection = DriverManager.getConnection(DB_URL, user, password);
             System.out.println("Соединение с БД выполнено.");
-            Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery("select color from public.colores");
-            if (!rs.next()) {
-                System.out.println("База данных пуста, первичное заполнение");
-                String arr = "{";
-                for (int i = 0; i < 400; i++) {
-                    arr += "{";
-                    for (int j = 0; j < 400; j++) {
-                        if(j != 399) {
-                            arr += "\"#FFFFFF\",";
-                        }
-                        else {
-                            arr += "\"#FFFFFF\"";
-                        }
-                    }
-                    if(i != 399) {
-                        arr += "},";
-                    }
-                    else {
-                        arr += "}";
-                    }
-                }
-                arr += "}";
-                System.out.println(arr);
-                st.executeUpdate("INSERT INTO public.colores (color) VALUES ('" + arr + "');");
-
-            }
-            isBase = true;
-            return new DataBase(connection);
         }
-        return null;
+        catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+
     }
 
     /**
      *
-     * @param connection Получение соединения
+     *
      */
-    private DataBase(Connection connection) {
-        this.connection = connection;
+    public DataBase(String DB_URL, String user, String password) {
+        this.DB_URL = DB_URL;
+        this.user = user;
+        this.password = password;
     }
 
     /**
      * Закрытие соединения
      */
-    @Override
+
     public void close() {
         try {
             connection.close();
-            isBase = false;
             System.out.println("Соединение успешно закрыто");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -83,30 +57,52 @@ public class DataBase implements Closeable {
     /**
      *
      * @return Возврат обновленного изображения
-     * @throws SQLException Бросает исключение, если нет подключения
      */
-    public Array getPixelMap() {
-        Array res = null;
+    public ResponseEntity<String> getPixelMap() {
+        String res = null;
         ResultSet rs = null;
+        Statement st = null;
         try {
-            rs = connection.createStatement().executeQuery("select color from public.colores");
+            createConnection();
+            st = connection.createStatement();
+            rs = st.executeQuery("select color from public.colores");
             if(rs.next()) {
-                res = rs.getArray(1);
+                res = rs.getString(1);
             }
+            st.close();
+            close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
-        return res;
+        return new ResponseEntity<String>(res, HttpStatus.OK);
     }
 
     /**
      *
      * @param color Цвет пикселя
-     * @param x Позиция пикселя
      * @throws SQLException Бросает исключение, если нет подключения
      */
-    public void insertPixel(String color, int x, int y) throws SQLException {
-        connection.createStatement().executeUpdate("UPDATE public.colores SET color[" + x + "][" + y + "]='" + color +"'");
+    public void insertPixel(String color) {
+        Statement st = null;
+        try {
+            createConnection();
+            st = connection.createStatement();
+            ResultSet rs = st.executeQuery("select color from public.colores");
+            String sql = "";
+            if(rs.next()) {
+                sql = "UPDATE public.colores SET color = '" + color + "'";
+            }
+            else {
+                sql = "INSERT INTO public.colores (color) Values('" + color + "')";
+            }
+            st.executeUpdate(sql);
+            st.close();
+            close();
+
+        }
+        catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 }

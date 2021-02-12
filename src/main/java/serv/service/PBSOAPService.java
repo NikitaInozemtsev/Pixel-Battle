@@ -1,29 +1,28 @@
 package serv.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import java.sql.Array;
 
 @Controller
 public class PBSOAPService {
 
 
-	private PBMain basetalker;
+	private PBMain basetalker = null;
 
 	/**
 	 *
 	 * @param basetalker Установка сервиса
 	 */
 
-	public PBSOAPService( ){
-		this.basetalker = new PBMain();
+	public PBSOAPService(@Value("${user.db_url}") String DB_URL,
+						 @Value("${user.name}") String user,
+						 @Value("${user.password}") String password){
+		this.basetalker = new PBMain(DB_URL, user, password);
 	}
 
 	/**
@@ -31,21 +30,20 @@ public class PBSOAPService {
 	 * @param color Команда сервису
 	 * @return Возврат признака успеха
 	 */
-//	@WebMethod
-//	@WebResult(name="Serv")
+
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public boolean insert(String color, int x, int y) {
-		return basetalker.insert(color,x,y);
+	@ResponseBody
+	public void insert(String color) {
+		basetalker.insert(color);
 	}
 
 	/**
 	 *
 	 * @return Обновление изображения
 	 */
-//	@WebMethod
-//	@WebResult(name="Serv")
+
 	@RequestMapping(value = "/update", method = RequestMethod.GET)
-	public Array select() {
+	public ResponseEntity<String> select() {
 		return basetalker.select();
 	}
 }
