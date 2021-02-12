@@ -6,9 +6,10 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class DataBase implements Closeable {
-    private static final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/postgres";
-    private static final String user = "postgres";
-    private static final String password = "123";
+
+    private static final String DB_URL = "jdbc:postgresql://:5432/postgres";
+    private static final String user = "lvovtr";
+    private static final String password = "Tjed_913";
     private static boolean isBase;
     private final Connection connection;
 
@@ -84,12 +85,18 @@ public class DataBase implements Closeable {
      * @return Возврат обновленного изображения
      * @throws SQLException Бросает исключение, если нет подключения
      */
-    public Array getPixelMap() throws SQLException {
+    public Array getPixelMap() {
         Array res = null;
-        ResultSet rs = connection.createStatement().executeQuery("select color from colors");
-        if(rs.next()) {
-            res = rs.getArray(1);
+        ResultSet rs = null;
+        try {
+            rs = connection.createStatement().executeQuery("select color from colors");
+            if(rs.next()) {
+                res = rs.getArray(1);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
+
         return res;
     }
 
