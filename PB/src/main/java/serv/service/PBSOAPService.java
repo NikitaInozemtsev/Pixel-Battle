@@ -3,6 +3,7 @@ package serv.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,7 +31,7 @@ public class PBSOAPService {
 	 * @param color Команда сервису
 	 * @return Возврат признака успеха
 	 */
-
+	@CrossOrigin
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	@ResponseBody
 	public void insert(String color) {
@@ -41,7 +42,7 @@ public class PBSOAPService {
 	 *
 	 * @return Обновление изображения
 	 */
-
+	@CrossOrigin
 	@RequestMapping(value = "/update", method = RequestMethod.GET)
 	public ResponseEntity<String> select() {
 		return basetalker.select();
