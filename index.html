@@ -6,28 +6,93 @@
 <body>
 
 	<script type="text/javascript">
-		var xhr = new XMLHttpRequest();
+		
+		async function getRequest() {
+			let response = await fetch("http://localhost:8085/update");
 
-		xhr.open('GET', 'http://localhost:8085/update', true);
-
-		xhr.send();
-
-		xhr.onreadystatechange = function() {
-		  if (this.readyState != 4) return;
-
-		  // по окончании запроса доступны:
-		  // status, statusText
-		  // responseText, responseXML (при content-type: text/xml)
-
-		  if (this.status != 200) {
-		    // обработать ошибку
-		    alert( 'ошибка: ' + (this.status ? this.statusText : 'запрос не удался') );
-		    return;
-		  }
-
-		  // получить результат из this.responseText или this.responseXML
-		  console.log(this.responseText);
+			if (response.ok) { // если HTTP-статус в диапазоне 200-299
+			  // получаем тело ответа (см. про этот метод ниже)
+				var a = await response.text();
+				if(a == "") {
+					for(var i = 0; i < 160000; i++) {
+						a += "#FFFFFF ";
+					}
+					var bl = lzw_encode(a);
+					postRequest(bl.join(" "));
+				}
+				else {
+					var res = lzw_decode(a.split(" "));
+					return res;
+				}
+			  
+			} else {
+			  alert("Ошибка HTTP: " + response.status);
+			}
+			
 		}
+		
+		async function postRequest(post) {
+			let response = await fetch('http://localhost:8085/update', {
+			  method: 'POST',
+			  headers: {
+				'Content-Type': 'text/plain;charset=UTF-8'
+			  },
+			  body: (post)
+			});
+		}
+		
+		function lzw_encode(s) {
+		var dict = {};
+		var data = (s + "").split("");
+		var out = [];
+		var currChar;
+		var phrase = data[0];
+		var code = 256;
+		for (var i = 1; i < data.length; i++) {
+			currChar = data[i];
+			if (dict[phrase + currChar] != null) {
+				phrase += currChar;
+			}
+			else {
+				out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+				dict[phrase + currChar] = code;
+				code++;
+				phrase = currChar;
+			}
+		}
+		out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+			
+		
+		return out;
+		}
+
+		// Decompress an LZW-encoded string
+		function lzw_decode(data) {
+			var dict = {};
+			var currChar = String.fromCharCode(data[0]);
+			var oldPhrase = currChar;
+			var out = [currChar];
+			var code = 256;
+			var phrase;
+			for (var i = 1; i < data.length; i++) {
+
+				var currCode = data[i];
+				if (currCode < 256) {
+					phrase = String.fromCharCode(data[i]);
+				}
+				else {
+					phrase = dict[currCode] ? dict[currCode] : (oldPhrase + currChar);
+				}
+				out += phrase;
+				currChar = phrase[0];
+				dict[code] = oldPhrase + currChar;
+				code++;
+				oldPhrase = phrase;
+			}
+			return out;
+			}
+		
+		getRequest();
 	</script>
 
 </body>
