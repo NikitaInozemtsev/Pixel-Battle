@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content>
+    <meta name="author" content>
+    <title>Please sign in</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script type="text/javascript">
+        async function checkPasswordMatch() {
+            var password = $("#password").val();
+            var confirmPassword = $("#passwordConfirm").val();
+
+
+            if (password != confirmPassword)
+                alert("Пароли не совпадают!");
+            else {
+                var form = $("form");
+                var username = $("#username").val();
+                let response = await fetch(`/isusername?username=${username}`);
+                if (response.ok) {
+                    alert("Имя пользователя уже занято!")
+                } else {
+                  form.submit()
+                }
+            }
+        }
+
+    </script>
+</head>
+<body>
+<div class="container">
+    <form class="form-signin" role="form" th:action="@{/registration}" th:method="post" th:object="${user}">
+        <h2 class="form-signin-heading">Please sign up</h2>
+        <p>
+            <label for="username" class="sr-only">Name</label>
+            <input type="text" id="username" name="username" th:field="*{username}" class="form-control" placeholder="Name" required autofocus>
+        </p>
+        <p>
+            <label for="password" class="sr-only">Password</label>
+            <input type="password" id="password" name="password" th:field="*{password}" class="form-control" placeholder="Password" required>
+        </p>
+        <p>
+            <label for="password" class="sr-only">Confirm Password</label>
+            <input type="password" id="passwordConfirm" name="passwordConfirm" class="form-control" placeholder="Confirm Password" required>
+
+        </p>
+
+
+    </form>
+
+    <button onclick="checkPasswordMatch()" class="btn btn-lg btn-primary btn-block mx-auto" style="width: 15%">Sign up</button>
+</div>
+</body>
+</html>

@@ -14,6 +14,8 @@
     <file url="file://$PROJECT_DIR$/src/main/java/serv/service/petLife.java" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/src/main/java/serv/service/restfull.java" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/src/main/resources/application.properties" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/templates/login.html" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/templates/registration.html" charset="UTF-8" />
     <file url="PROJECT" charset="windows-1251" />
   </component>
 </project>
