@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Document</title>
+</head>
+<style>
+    body,html {
+        height: 100%;
+    }
+    .wrapper1 {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+    }
+    .wrapper {
+        height: 400px;
+        width: 400;
+    }
+</style>
+<body>
+<div class = "wrapper1">
+    <!-- <iframe src="canvas.html" frameborder="1" height="800" width="800">
+
+    </iframe> -->
+    <div class="wrapper">
+        <canvas id="canvas" width=50 height=50></canvas>
+    </div>
+
+    <h2 id="status">0 | 0</h2>
+
+    <button class="save">Save</button>
+
+    <button class="update">Update</button>
+</div>
+
+    
+<script src="canvas.js"></script>
+</body>
+</html>
