@@ -17,6 +17,7 @@
 					for(var i = 0; i < 160000; i++) {
 						a += "#FFFFFF ";
 					}
+					a = a.substring(0, a.length-1);
 					var bl = lzw_encode(a);
 					postRequest(bl.join(" "));
 				}
