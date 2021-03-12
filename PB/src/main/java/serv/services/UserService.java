@@ -9,10 +9,13 @@ import org.springframework.stereotype.Service;
 import serv.models.User;
 import serv.repositories.UserRepository;
 
+/** Реализация логики сервиса*/
 @Service
 public class UserService implements UserDetailsService {
+    /** Шифратор*/
     @Autowired
     BCryptPasswordEncoder encoder;
+    /** Репозиторий отвечающий за связь с таблицей*/
     @Autowired
     private UserRepository reps;
 
@@ -21,6 +24,8 @@ public class UserService implements UserDetailsService {
         this.encoder = enc;
     }
 
+    /** Добавление пользователя в табоицу
+     * @param user пользователь*/
     public void signUpUser(User user) {
 
         final String encryptedPassword = encoder.encode(user.getPassword());
@@ -32,9 +37,11 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    /** Загрузка пользователя по его имени
+     * @param s имя пользователя
+     * @return пользователь*/
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-
         return reps.findById(s).get();
     }
 }

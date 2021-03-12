@@ -9,19 +9,22 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Collection;
 
+/** Сущность пользователь. */
 @Entity
 @Table(name = "t_user")
 public class User implements UserDetails {
+    /** Имя пользователя является идентификатором. */
     @Id
     @Column(name = "username")
     private String username;
+    /** Пароль пользователя.*/
     @Column(name = "password")
     private String password;
 
     public User() {
     }
 
-    public User(String u, String p, String c) {
+    public User(String u, String p) {
         this.username = u;
         this.password = p;
     }
@@ -30,21 +33,28 @@ public class User implements UserDetails {
         return username;
     }
 
+    /** Метод отвечающий за актуальность аккаунта
+     * @return аккаунт актуальны */
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
-
+    /** Метод отвечающий за блокировку аккаунта
+     * @return не заблокирован пользователь*/
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    /** Метод отвечающий за актуальность учетных данных
+     * @return учетные данные актуальны */
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    /** Метод отвечающий за разрешение
+     * @return разрешение получено */
     @Override
     public boolean isEnabled() {
         return true;
@@ -55,6 +65,8 @@ public class User implements UserDetails {
         this.username = username;
     }
 
+    /** Метод отвечающий за права пользователя
+     * @return права пользователя*/
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
