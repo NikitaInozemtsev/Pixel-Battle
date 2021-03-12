@@ -5,9 +5,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/** —ущность пиксели*/
 @Entity
 @Table(name = "colores")
 public class Pixel {
+    /** ÷вета пикселей*/
     @Id
     @Column(name = "color")
     String color;

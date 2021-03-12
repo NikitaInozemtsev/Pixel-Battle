@@ -18,8 +18,10 @@
                     <target>11</target>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
+
     <dependencies>
         <dependency>
             <groupId>org.postgresql</groupId>
