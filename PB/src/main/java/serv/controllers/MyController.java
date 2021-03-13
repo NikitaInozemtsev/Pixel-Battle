@@ -25,7 +25,7 @@ public class MyController {
      * @return начальная страница*/
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String startPage() {
-        return "index";
+        return "newCanvasFrame";
     }
 
     /** Метод возвращающий сраницу авторизации
