@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <script
+  src="https://code.jquery.com/jquery-3.6.0.js"
+  integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+  crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.css">   
     <title>Document</title>
 </head>
 <style>
@@ -22,7 +27,11 @@
     }
     .wrapper {
         height: 400px;
-        width: 400;
+        width: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 </style>
 <body>
@@ -34,14 +43,34 @@
         <canvas id="canvas" width=50 height=50></canvas>
     </div>
 
+
     <h2 id="status">0 | 0</h2>
+
+    <input id="color-picker" class="basic" value='#276cb8' />
+
+    <script>
+        $('#color-picker').spectrum({
+        type: "component",
+        showPaletteOnly: "true",
+        showInput: "true"
+        });
+
+        $(".basic").spectrum();
+    </script>
 
     <button class="save">Save</button>
 
     <button class="update">Update</button>
 </div>
 
-    
+ 
 <script src="canvas.js"></script>
+
+<script>
+    $(".basic").on('change.spectrum', function(e, tinycolor) {
+            currColor = tinycolor.toHexString()
+            console.log(currColor)
+        });
+</script>
 </body>
 </html>
