@@ -94,46 +94,20 @@ var canvasWidth = ctx.canvas.width, canvasHeight = ctx.canvas.height
 var mouseX, mouseY
 var canvasOffsetLeft = ctx.canvasOffsetLeft, canvasOffsetTop = ctx.canvasOffsetTop
 var pixels = []
-var prevX, prevY
+var prevX, prevY;
+
+trackTransforms(ctx);
 
 let currColor = "#FF0000"
 
-// eslint-disable-next-line no-undef
-
 updateCanvas()
-
-// frame.setAttribute("height",canvasHeight)
-// frame.setAttribute("width", canvasWidth)
-
-// let a = ""
-// for (let i = 0; i < canvasHeight*canvasWidth; i++) {
-//     a += "#FFFFFF ";
-// }
-
-// let bl = lzw_encode(a);
-// postRequest(bl.join(" "))
-
 
 function initCanvas() {
 
-
   ctx.canvas.style.cursor = "crosshair";
 
-  // canvasWidth = ctx.canvas.width,
-  //     canvasHeight = ctx.canvas.height;
-  // ctx.fillStyle = "red";
-  // ctx.fillRect(0,0,5,5);
-  // ctx.fillRect(25,25,5,5);
-
-  //imageData = ctx.createImageData(canvasWidth, canvasHeight);
-
-  // ctx.fillRect(0,0,1,1);
   ctx.strokeRect(0, 0, canvasWidth, canvasHeight);
 
-  // canvasOffsetLeft = ctx.canvas.offsetLeft;
-  //  canvasOffsetTop = ctx.canvas.offsetTop;
-
-  //ctx.fillRect(10,10,50,50);
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -149,7 +123,7 @@ function saveCanvas(arr) {
 
 function updateCanvas() {
   var y
-  //get запрос на получение массива и его выгрузка на полотно
+ 
   let str = getRequest()
   str.then(data => {
     pixels = data.split(" ");
@@ -157,17 +131,34 @@ function updateCanvas() {
     for (let i = 0; i < pixels.length; i++) {
       ctx.fillStyle = pixels[i];
       y = Math.floor(i / canvasHeight);
-      // console.log("x = " + (x-canvasWidth*y) + " " + "y = " + y);
+
       ctx.fillRect(i - canvasWidth * y, y, 1, 1);
     }
     ctx.strokeRect(0, 0, canvasWidth, canvasHeight);
     console.log(pixels);
   });
-  //console.log(typeof str)
+
 
 }
 
 
+
+var zoom = function(clicks){
+			var pt = ctx.transformedPoint(lastX,lastY);
+			ctx.translate(pt.x,pt.y);
+			var factor = Math.pow(scaleFactor,clicks);
+			ctx.scale(factor,factor);
+			ctx.translate(-pt.x,-pt.y);
+			updateCanvas();
+		}
+
+    var handleScroll = function(evt){
+			var delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
+			if (delta) zoom(delta);
+			return evt.preventDefault() && false;
+		};
+		canvas.addEventListener('DOMMouseScroll',handleScroll,false);
+		canvas.addEventListener('mousewheel',handleScroll,false);
 
 
 
@@ -179,11 +170,9 @@ btn.addEventListener("click", function () {
 });
 
 btnU.addEventListener("click", function () {
-  updateCanvas()
-  //    ctx.fillStyle = pixels[0]
 
-  //     ctx.fillRect(0,0,1,1)
-  //     ctx.fillRect(1,0,1,1)
+  updateCanvas()
+
 });
 
 ctx.canvas.addEventListener('mousemove', function (e) {
@@ -194,22 +183,81 @@ ctx.canvas.addEventListener('mousemove', function (e) {
 });
 
 ctx.canvas.addEventListener('click', function (e) {
-  // занесение пикселя в массив
+
   mouseX = e.clientX - ctx.canvas.offsetLeft;
   mouseY = e.clientY - ctx.canvas.offsetTop;
   if (typeof prevX !== 'undefined' && typeof prevY !== 'undefined') {
     ctx.fillStyle = pixels[prevX + prevY * canvasWidth]
     ctx.fillRect(prevX, prevY,1,1)
   }
-  ctx.fillStyle = currColor; //любой другой цвет change
+  ctx.fillStyle = currColor; 
   prevX = mouseX
   prevY = mouseY
 
   ctx.fillRect(mouseX, mouseY, 1, 1);
 
-  //pixels[mouseX + mouseY * canvasWidth] = currColor
+ 
 
 });
+
+
+
+function trackTransforms(ctx){
+
+		var svg = document.createElementNS("http://www.w3.org/2000/svg",'svg');
+		var xform = svg.createSVGMatrix();
+		ctx.getTransform = function(){ return xform; };
+		
+		var savedTransforms = [];
+		var save = ctx.save;
+		ctx.save = function(){
+			savedTransforms.push(xform.translate(0,0));
+			return save.call(ctx);
+		};
+		var restore = ctx.restore;
+		ctx.restore = function(){
+			xform = savedTransforms.pop();
+			return restore.call(ctx);
+		};
+
+		var scale = ctx.scale;
+		ctx.scale = function(sx,sy){
+			xform = xform.scaleNonUniform(sx,sy);
+			return scale.call(ctx,sx,sy);
+		};
+		var rotate = ctx.rotate;
+		ctx.rotate = function(radians){
+			xform = xform.rotate(radians*180/Math.PI);
+			return rotate.call(ctx,radians);
+		};
+		var translate = ctx.translate;
+		ctx.translate = function(dx,dy){
+			xform = xform.translate(dx,dy);
+			return translate.call(ctx,dx,dy);
+		};
+		var transform = ctx.transform;
+		ctx.transform = function(a,b,c,d,e,f){
+			var m2 = svg.createSVGMatrix();
+			m2.a=a; m2.b=b; m2.c=c; m2.d=d; m2.e=e; m2.f=f;
+			xform = xform.multiply(m2);
+			return transform.call(ctx,a,b,c,d,e,f);
+		};
+		var setTransform = ctx.setTransform;
+		ctx.setTransform = function(a,b,c,d,e,f){
+			xform.a = a;
+			xform.b = b;
+			xform.c = c;
+			xform.d = d;
+			xform.e = e;
+			xform.f = f;
+			return setTransform.call(ctx,a,b,c,d,e,f);
+		};
+		var pt  = svg.createSVGPoint();
+		ctx.transformedPoint = function(x,y){
+			pt.x=x; pt.y=y;
+			return pt.matrixTransform(xform.inverse());
+		}
+	}
 
 
         async function getRequest() {
