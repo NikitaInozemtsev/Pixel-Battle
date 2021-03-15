@@ -5,16 +5,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script
-  src="https://code.jquery.com/jquery-3.6.0.js"
-  integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-  crossorigin="anonymous"></script>
+            src="https://code.jquery.com/jquery-3.6.0.js"
+            integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+            crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.css">   
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.css">
     <title>Document</title>
 </head>
 <style>
     body,html {
         height: 100%;
+        margin: 0px;
+        overflow:scroll
     }
     .wrapper1 {
         height: 100%;
@@ -40,7 +42,7 @@
 
     </iframe> -->
     <div class="wrapper">
-        <canvas id="canvas" width=50 height=50></canvas>
+        <canvas id="canvas" width=400 height=400></canvas>
     </div>
 
 
@@ -63,14 +65,339 @@
     <button class="update">Update</button>
 </div>
 
- 
-<script src="canvas.js"></script>
-
 <script>
+
     $(".basic").on('change.spectrum', function(e, tinycolor) {
             currColor = tinycolor.toHexString()
             console.log(currColor)
         });
+
+    $(".basic").on('move.spectrum', function(e, tinycolor) {
+            currColor = tinycolor.toHexString()
+            console.log(currColor)
+    });
+</script>
+
+    
+<script>
+let btn = document.getElementsByClassName("save")[0];
+
+
+let btnU = document.getElementsByClassName("update")[0];
+
+
+// let frame = document.getElementsByTagName("iframe")[0];
+// let frameDoc = frame.contentWindow.document;
+
+let ctx = document.getElementById('canvas').getContext('2d');
+var canvasWidth = ctx.canvas.width, canvasHeight = ctx.canvas.height
+var mouseX, mouseY
+var canvasOffsetLeft = ctx.canvasOffsetLeft, canvasOffsetTop = ctx.canvasOffsetTop
+var pixels = []
+var prevX, prevY;
+
+trackTransforms(ctx);
+
+let currColor = "#FF0000"
+
+updateCanvas()
+
+function initCanvas() {
+
+  ctx.canvas.style.cursor = "crosshair";
+
+  ctx.strokeRect(0, 0, canvasWidth, canvasHeight);
+
+}
+
+function redraw() {
+	var p1 = ctx.transformedPoint(canvasOffsetLeft,canvasOffsetTop);
+           // console.log("p1 = " + p1)
+			var p2 = ctx.transformedPoint(canvasOffsetLeft+canvas.width,canvasOffsetTop+canvas.height);
+           // console.log("p2 = " + p2)
+			ctx.clearRect(p1.x,p1.y,p2.x-p1.x,p2.y-p1.y);
+
+	for (let i = 0; i < pixels.length; i++) {
+      ctx.fillStyle = pixels[i];
+      y = Math.floor(i / canvasHeight);
+
+      ctx.fillRect(i - canvasWidth * y, y, 1, 1);
+    }
+	ctx.fillStyle = currColor
+	ctx.fillRect(prevX,prevY,1,1)
+	
+    ctx.strokeRect(0, 0, canvasWidth, canvasHeight);
+
+}
+
+// eslint-disable-next-line no-unused-vars
+window.addEventListener('load', function (e) {
+  initCanvas();
+})
+
+function saveCanvas(arr) {
+
+  postRequest(arr.join(" "));
+
+}
+
+function updateCanvas() {
+  var y
+ 
+  let str = getRequest()
+  str.then(data => {
+    pixels = data.split(" ");
+    console.log(pixels)
+    for (let i = 0; i < pixels.length; i++) {
+      ctx.fillStyle = pixels[i];
+      y = Math.floor(i / canvasHeight);
+
+      ctx.fillRect(i - canvasWidth * y, y, 1, 1);
+    }
+    ctx.strokeRect(0, 0, canvasWidth, canvasHeight);
+    console.log(pixels);
+  });
+
+
+}
+
+
+
+var lastX=canvas.width/2, lastY=canvas.height/2;
+		var dragStart,dragged;
+		canvas.addEventListener('mousedown',function(evt){
+			document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
+			lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
+			lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
+			dragStart = ctx.transformedPoint(lastX,lastY);
+			dragged = false;
+		},false);
+		canvas.addEventListener('mousemove',function(evt){
+			lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
+			lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
+			dragged = true;
+			if (dragStart){
+				var pt = ctx.transformedPoint(lastX,lastY);
+				ctx.translate(pt.x-dragStart.x,pt.y-dragStart.y);
+				redraw();
+			}
+		},false);
+		canvas.addEventListener('mouseup',function(evt){
+			dragStart = null;
+			// if (!dragged) zoom(evt.shiftKey ? -1 : 1 ); // zoom on click
+		},false);
+
+		var scaleFactor = 1.1;
+		var zoom = function(clicks){
+			var pt = ctx.transformedPoint(lastX,lastY);
+			ctx.translate(pt.x,pt.y);
+			var factor = Math.pow(scaleFactor,clicks);
+			ctx.scale(factor,factor);
+			ctx.translate(-pt.x,-pt.y);
+			redraw();
+		}
+
+		var handleScroll = function(evt){
+			var delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
+			if (delta) zoom(delta);
+			return evt.preventDefault() && false;
+		};
+		canvas.addEventListener('DOMMouseScroll',handleScroll,false);
+		canvas.addEventListener('mousewheel',handleScroll,false);
+
+
+
+btn.addEventListener("click", function () {
+    pixels[prevX + prevY * canvasWidth] = currColor
+    prevX = undefined;
+    prevY = undefined;
+  saveCanvas(pixels)
+});
+
+btnU.addEventListener("click", function () {
+
+  updateCanvas()
+
+});
+
+ctx.canvas.addEventListener('mousemove', function (e) {
+  mouseX = e.clientX - ctx.canvas.offsetLeft;
+  mouseY = e.clientY - ctx.canvas.offsetTop;
+  let status = document.getElementById('status');
+  status.innerHTML = mouseX + " | " + mouseY;
+});
+
+ctx.canvas.addEventListener('click', function (e) {
+
+  mouseX = e.clientX - ctx.canvas.offsetLeft;
+  mouseY = e.clientY - ctx.canvas.offsetTop;
+  if (typeof prevX !== 'undefined' && typeof prevY !== 'undefined') {
+    ctx.fillStyle = pixels[prevX + prevY * canvasWidth]
+    ctx.fillRect(prevX, prevY,1,1)
+  }
+  ctx.fillStyle = currColor; 
+  prevX = mouseX
+  prevY = mouseY
+
+  ctx.fillRect(mouseX, mouseY, 1, 1);
+
+ 
+
+});
+
+
+
+function trackTransforms(ctx){
+
+		var svg = document.createElementNS("http://www.w3.org/2000/svg",'svg');
+		var xform = svg.createSVGMatrix();
+		ctx.getTransform = function(){ return xform; };
+		
+		var savedTransforms = [];
+		var save = ctx.save;
+		ctx.save = function(){
+			savedTransforms.push(xform.translate(0,0));
+			return save.call(ctx);
+		};
+		var restore = ctx.restore;
+		ctx.restore = function(){
+			xform = savedTransforms.pop();
+			return restore.call(ctx);
+		};
+
+		var scale = ctx.scale;
+		ctx.scale = function(sx,sy){
+			xform = xform.scaleNonUniform(sx,sy);
+			return scale.call(ctx,sx,sy);
+		};
+		var rotate = ctx.rotate;
+		ctx.rotate = function(radians){
+			xform = xform.rotate(radians*180/Math.PI);
+			return rotate.call(ctx,radians);
+		};
+		var translate = ctx.translate;
+		ctx.translate = function(dx,dy){
+			xform = xform.translate(dx,dy);
+			return translate.call(ctx,dx,dy);
+		};
+		var transform = ctx.transform;
+		ctx.transform = function(a,b,c,d,e,f){
+			var m2 = svg.createSVGMatrix();
+			m2.a=a; m2.b=b; m2.c=c; m2.d=d; m2.e=e; m2.f=f;
+			xform = xform.multiply(m2);
+			return transform.call(ctx,a,b,c,d,e,f);
+		};
+		var setTransform = ctx.setTransform;
+		ctx.setTransform = function(a,b,c,d,e,f){
+			xform.a = a;
+			xform.b = b;
+			xform.c = c;
+			xform.d = d;
+			xform.e = e;
+			xform.f = f;
+			return setTransform.call(ctx,a,b,c,d,e,f);
+		};
+		var pt  = svg.createSVGPoint();
+		ctx.transformedPoint = function(x,y){
+			pt.x=x; pt.y=y;
+			return pt.matrixTransform(xform.inverse());
+		}
+	}
+
+
+        async function getRequest() {
+			let response = await fetch("/update");
+
+			if (response.ok) { // если HTTP-статус в диапазоне 200-299
+			  // получаем тело ответа (см. про этот метод ниже)
+				var a = await response.text();
+				console.log(typeof a)
+				if(a == "") {
+					for(var i = 0; i < 160000; i++) {
+						a += "#FFFFFF ";
+					}
+					a = a.substring(0, a.length-1);
+					var bl = lzw_encode(a);
+
+					postRequest(bl.join(" "));
+
+                    return a
+				}
+				else {
+					var res = lzw_decode(a.split(" "));
+					return res
+				}
+
+			} else {
+			  alert("Ошибка HTTP: " + response.status);
+			}
+
+		}
+
+        async function postRequest(post) {
+            post = lzw_encode(post).join(" ")
+
+			let response = await fetch('/update', {
+			  method: 'POST',
+			  headers: {
+				'Content-Type': 'text/plain;charset=UTF-8'
+			  },
+			  body: (post)
+			});
+		}
+
+		function lzw_encode(s) {
+		var dict = {};
+		var data = (s + "").split("");
+		var out = [];
+		var currChar;
+		var phrase = data[0];
+		var code = 256;
+		for (var i = 1; i < data.length; i++) {
+			currChar = data[i];
+			if (dict[phrase + currChar] != null) {
+				phrase += currChar;
+			}
+			else {
+				out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+				dict[phrase + currChar] = code;
+				code++;
+				phrase = currChar;
+			}
+		}
+		out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+
+
+		return out;
+		}
+
+		// Decompress an LZW-encoded string
+		function lzw_decode(data) {
+			var dict = {};
+			var currChar = String.fromCharCode(data[0]);
+			var oldPhrase = currChar;
+			var out = [currChar];
+			var code = 256;
+			var phrase;
+			for (var i = 1; i < data.length; i++) {
+
+				var currCode = data[i];
+				if (currCode < 256) {
+					phrase = String.fromCharCode(data[i]);
+				}
+				else {
+					phrase = dict[currCode] ? dict[currCode] : (oldPhrase + currChar);
+				}
+				out += phrase;
+				currChar = phrase[0];
+				dict[code] = oldPhrase + currChar;
+				code++;
+				oldPhrase = phrase;
+			}
+			return out;
+			}
+
+
 </script>
 </body>
 </html>
