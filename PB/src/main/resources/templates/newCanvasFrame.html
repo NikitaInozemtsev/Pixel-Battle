@@ -88,7 +88,7 @@ let btnU = document.getElementsByClassName("update")[0];
 
 // let frame = document.getElementsByTagName("iframe")[0];
 // let frameDoc = frame.contentWindow.document;
-
+let canvas = document.getElementById('canvas');
 let ctx = document.getElementById('canvas').getContext('2d');
 var canvasWidth = ctx.canvas.width, canvasHeight = ctx.canvas.height
 var mouseX, mouseY
@@ -112,6 +112,7 @@ function initCanvas() {
 
 function redraw() {
 	var p1 = ctx.transformedPoint(canvasOffsetLeft,canvasOffsetTop);
+
            // console.log("p1 = " + p1)
 			var p2 = ctx.transformedPoint(canvasOffsetLeft+canvas.width,canvasOffsetTop+canvas.height);
            // console.log("p2 = " + p2)
