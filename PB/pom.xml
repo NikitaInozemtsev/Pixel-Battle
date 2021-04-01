@@ -3,10 +3,11 @@
     <groupId>serv</groupId>
     <artifactId>services</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>serv.services</name>
+    <name>serv</name>
     <properties>
-        <exec.mainClass>serv.services.RunApp</exec.mainClass>
+        <exec.mainClass>serv.RunApp</exec.mainClass>
         <spring.version>2.3.9.RELEASE</spring.version>
+
     </properties>
     <build>
         <plugins>
@@ -18,9 +19,18 @@
                     <target>11</target>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+
+
 
     <dependencies>
         <dependency>
