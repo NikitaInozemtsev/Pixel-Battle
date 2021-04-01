@@ -13,28 +13,28 @@
     <title>Document</title>
 </head>
 <style>
-    body,html {
-        height: 100%;
-        margin: 0px;
-        overflow:scroll
-    }
-    .wrapper1 {
-        height: 100%;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+<!--    body,html {-->
+<!--        height: 100%;-->
+<!--        margin: 0px;-->
+<!--        overflow:scroll-->
+<!--    }-->
+<!--    .wrapper1 {-->
+<!--        height: 100%;-->
+<!--        width: 100%;-->
+<!--        display: flex;-->
+<!--        flex-direction: column;-->
+<!--        justify-content: center;-->
+<!--        align-items: center;-->
 
-    }
-    .wrapper {
-        height: 400px;
-        width: 400px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
+<!--    }-->
+<!--    .wrapper {-->
+<!--        height: 400px;-->
+<!--        width: 400px;-->
+<!--        display: flex;-->
+<!--        flex-direction: column;-->
+<!--        justify-content: center;-->
+<!--        align-items: center;-->
+<!--    }-->
 </style>
 <body>
 <div class = "wrapper1">
@@ -221,12 +221,12 @@ btnU.addEventListener("click", function () {
 
 });
 
-<!--ctx.canvas.addEventListener('mousemove', function (e) {-->
-<!--  mouseX = e.clientX - ctx.canvas.offsetLeft;-->
-<!--  mouseY = e.clientY - ctx.canvas.offsetTop;-->
-<!--  let status = document.getElementById('status');-->
-<!--  status.innerHTML = mouseX + " | " + mouseY;-->
-<!--});-->
+ctx.canvas.addEventListener('mousemove', function (e) {
+  mouseX = e.clientX - ctx.canvas.offsetLeft;
+  mouseY = e.clientY - ctx.canvas.offsetTop;
+  let status = document.getElementById('status');
+  status.innerHTML = mouseX + " | " + mouseY;
+});
 
 ctx.canvas.addEventListener('click', function (e) {
 
