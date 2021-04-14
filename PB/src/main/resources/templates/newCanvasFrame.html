@@ -10,6 +10,7 @@
             crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.css">
+    <link href="/styles.css" rel="stylesheet" type="text/css">
     <title>Document</title>
 </head>
 <style>
@@ -27,28 +28,33 @@
 <!--        align-items: center;-->
 
 <!--    }-->
-<!--    .wrapper {-->
-<!--        height: 400px;-->
-<!--        width: 400px;-->
+    .wrapper {
+        height: 400px;
+        width: 400px;
+        border: 1px solid black;
+
 <!--        display: flex;-->
 <!--        flex-direction: column;-->
 <!--        justify-content: center;-->
 <!--        align-items: center;-->
-<!--    }-->
+
+    }
 </style>
 <body>
+<h1> some text for testing js</h1>
 <div class = "wrapper1">
     <!-- <iframe src="canvas.html" frameborder="1" height="800" width="800">
 
     </iframe> -->
-    <div class="wrapper">
+    <div class="wrapper" >
         <canvas id="canvas" width=400 height=400></canvas>
-    </div>
+   </div>
 
 
     <h2 id="status">0 | 0</h2>
 
     <input id="color-picker" class="basic" value='#276cb8' />
+
 
     <script>
         $('#color-picker').spectrum({
@@ -95,6 +101,8 @@ var mouseX, mouseY
 var canvasOffsetLeft = ctx.canvasOffsetLeft, canvasOffsetTop = ctx.canvasOffsetTop
 var pixels = []
 var prevX, prevY;
+var factor = 1;
+var image = new Image;
 
 trackTransforms(ctx);
 
@@ -105,10 +113,27 @@ updateCanvas()
 function initCanvas() {
 
   ctx.canvas.style.cursor = "crosshair";
+<!--  ctx.fillStyle = '#808080';-->
+<!--  ctx.fillRect(0,0,canvasWidth, canvasHeight);-->
 
-  ctx.strokeRect(0, 0, canvasWidth, canvasHeight);
+
+  //ctx.strokeRect(0, 0, canvasWidth, canvasHeight);
 
 }
+
+<!--const requestGif = async() =>{-->
+<!--return await fetch(`http://localhost:8085/image`).then(response => response.blob());-->
+<!--};-->
+
+<!--requestGif().then(blob =>-->
+<!--{-->
+<!--const img = new Image();-->
+<!--img.onload = function(){ctx.drawImage(img, 0, 0)};//событие на загрузку - нарисовать-->
+<!--img.src = URL.createObjectURL(blob);//источник для загрузки-->
+<!--}-->
+<!--)-->
+
+
 
 function redraw() {
 	var p1 = ctx.transformedPoint(canvasOffsetLeft,canvasOffsetTop);
@@ -124,10 +149,12 @@ function redraw() {
 
       ctx.fillRect(i - canvasWidth * y, y, 1, 1);
     }
+       // ctx.drawImage(image,0,0)
 	ctx.fillStyle = currColor
 	ctx.fillRect(prevX,prevY,1,1)
 
-    ctx.strokeRect(0, 0, canvasWidth, canvasHeight);
+
+
 
 }
 
@@ -153,9 +180,10 @@ function updateCanvas() {
       ctx.fillStyle = pixels[i];
       y = Math.floor(i / canvasHeight);
 
-      ctx.fillRect(i - canvasWidth * y, y, 1, 1);
+      ctx.fillRect(i - (canvasWidth) * y, y, 1, 1);
     }
-    ctx.strokeRect(0, 0, canvasWidth, canvasHeight);
+    //image.src = canvas.toDataURL();
+    //ctx.strokeRect(0, 0, canvasWidth, canvasHeight);
     console.log(pixels);
   });
 
@@ -166,45 +194,45 @@ function updateCanvas() {
 
 var lastX=canvas.width/2, lastY=canvas.height/2;
 		var dragStart,dragged;
-		canvas.addEventListener('mousedown',function(evt){
-			document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
-			lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
-			lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
-			dragStart = ctx.transformedPoint(lastX,lastY);
-			dragged = false;
-		},false);
-		canvas.addEventListener('mousemove',function(evt){
-			lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
-			lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
-			dragged = true;
-			if (dragStart){
-				var pt = ctx.transformedPoint(lastX,lastY);
-				ctx.translate(pt.x-dragStart.x,pt.y-dragStart.y);
-				redraw();
-			}
-		},false);
-		canvas.addEventListener('mouseup',function(evt){
-			dragStart = null;
-			// if (!dragged) zoom(evt.shiftKey ? -1 : 1 ); // zoom on click
-		},false);
+<!--		canvas.addEventListener('mousedown',function(evt){-->
+<!--			document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';-->
+<!--			lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);-->
+<!--			lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);-->
+<!--			dragStart = ctx.transformedPoint(lastX,lastY);-->
+<!--			dragged = false;-->
+<!--		},false);-->
+<!--		canvas.addEventListener('mousemove',function(evt){-->
+<!--			lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);-->
+<!--			lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);-->
+<!--			dragged = true;-->
+<!--			if (dragStart){-->
+<!--				var pt = ctx.transformedPoint(lastX,lastY);-->
+<!--				ctx.translate(pt.x-dragStart.x,pt.y-dragStart.y);-->
+<!--				redraw();-->
+<!--			}-->
+<!--		},false);-->
+<!--		canvas.addEventListener('mouseup',function(evt){-->
+<!--			dragStart = null;-->
+<!--			// if (!dragged) zoom(evt.shiftKey ? -1 : 1 ); // zoom on click-->
+<!--		},false);-->
 
-		var scaleFactor = 1.1;
-		var zoom = function(clicks){
-			var pt = ctx.transformedPoint(lastX,lastY);
-			ctx.translate(pt.x,pt.y);
-			var factor = Math.pow(scaleFactor,clicks);
-			ctx.scale(factor,factor);
-			ctx.translate(-pt.x,-pt.y);
-			redraw();
-		}
+<!--		var scaleFactor = 1.05;-->
+<!--		var zoom = function(clicks){-->
+<!--			var pt = ctx.transformedPoint(lastX,lastY);-->
+<!--			ctx.translate(pt.x,pt.y);-->
+<!--			factor = Math.pow(scaleFactor,clicks);-->
+<!--			ctx.scale(factor,factor);-->
+<!--			ctx.translate(-pt.x,-pt.y);-->
+<!--			redraw();-->
+<!--		}-->
 
-		var handleScroll = function(evt){
-			var delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
-			if (delta) zoom(delta);
-			return evt.preventDefault() && false;
-		};
-		canvas.addEventListener('DOMMouseScroll',handleScroll,false);
-		canvas.addEventListener('mousewheel',handleScroll,false);
+<!--		var handleScroll = function(evt){-->
+<!--			var delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;-->
+<!--			if (delta) zoom(delta);-->
+<!--			return evt.preventDefault() && false;-->
+<!--		};-->
+<!--		canvas.addEventListener('DOMMouseScroll',handleScroll,false);-->
+<!--		canvas.addEventListener('mousewheel',handleScroll,false);-->
 
 
 
@@ -222,16 +250,36 @@ btnU.addEventListener("click", function () {
 });
 
 ctx.canvas.addEventListener('mousemove', function (e) {
-  mouseX = e.clientX - ctx.canvas.offsetLeft;
-  mouseY = e.clientY - ctx.canvas.offsetTop;
+<!--  mouseX = Math.round(e.screenX - ctx.canvas.offsetLeft);-->
+<!--  mouseY = Math.round(e.screenY - ctx.canvas.offsetTop);-->
+
+<!--  mouseX = e.clientX  - ctx.canvas.offsetLeft - document.documentElement.scrollLeft;-->
+<!--  mouseY = e.clientY - ctx.canvas.offsetTop - document.documentElement.scrollTop;-->
+  mouseX = e.offsetX || (e.pageX - canvas.offsetLeft)
+  mouseY = e.offsetY || (e.pageY - canvas.offsetTop)
   let status = document.getElementById('status');
   status.innerHTML = mouseX + " | " + mouseY;
+
+
+
+
 });
 
 ctx.canvas.addEventListener('click', function (e) {
 
-  mouseX = e.clientX - ctx.canvas.offsetLeft;
-  mouseY = e.clientY - ctx.canvas.offsetTop;
+<!--mouseX = (e.screenX - ctx.canvas.offsetLeft)-->
+<!--  mouseY = (e.screenY - ctx.canvas.offsetTop)-->
+
+<!--mouseX =  e.clientX  - ctx.canvas.offsetLeft + document.documentElement.scrollLeft-->
+<!--mouseY =  e.clientY - ctx.canvas.offsetTop + document.documentElement.scrollTop-->
+
+  mouseX = e.offsetX || (e.pageX - canvas.offsetLeft)
+  mouseY = e.offsetY || (e.pageY - canvas.offsetTop)
+<!--  mouseX = (e.clientX - ctx.canvas.offsetLeft)-->
+<!--  mouseY = (e.clientY - ctx.canvas.offsetTop) //ctx.canvas.height * 400-->
+  console.log(mouseX + " | " + mouseY)
+  console.log( "offsetLeft: " + ctx.canvas.offsetLeft + "offsetTop: " + ctx.canvas.offsetTop)
+  console.log( "CW: " + ctx.canvas.width + "CH: " + ctx.canvas.height)
   if (typeof prevX !== 'undefined' && typeof prevY !== 'undefined') {
     ctx.fillStyle = pixels[prevX + prevY * canvasWidth]
     ctx.fillRect(prevX, prevY,1,1)
@@ -315,12 +363,18 @@ function trackTransforms(ctx){
 				console.log(typeof a)
 				if(a == "") {
 					for(var i = 0; i < 160000; i++) {
-						a += "#FFFFFF ";
+<!--						var randomColor = (function lol(m, s, c) {-->
+<!--                    return s[m.floor(m.random() * s.length)] +-->
+<!--                        (c && lol(m, s, c - 1));-->
+<!--                })(Math, '3456789ABCDEF', 4);-->
+<!--						a += "#" + randomColor + " ";-->
+                            a += "#FFFFFF ";
 					}
 					a = a.substring(0, a.length-1);
-					var bl = lzw_encode(a);
 
-					postRequest(bl.join(" "));
+
+                    console.log(a)
+					postRequest(a);
 
                     return a
 				}
@@ -397,6 +451,8 @@ function trackTransforms(ctx){
 			}
 			return out;
 			}
+
+
 
 
 </script>

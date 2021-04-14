@@ -1,6 +1,8 @@
 package serv.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -9,6 +11,13 @@ import serv.models.Pixel;
 import serv.models.User;
 import serv.services.PixelService;
 import serv.services.UserService;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /** ”правл€ющий класс*/
 @Controller
@@ -27,6 +36,7 @@ public class MyController {
     public String startPage() {
         return "newCanvasFrame";
     }
+
 
     /** ћетод возвращающий сраницу авторизации
      * @return страница авторизации*/
