@@ -3,11 +3,13 @@
     <groupId>serv</groupId>
     <artifactId>services</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <name>serv</name>
     <properties>
         <exec.mainClass>serv.RunApp</exec.mainClass>
         <spring.version>2.3.9.RELEASE</spring.version>
-
+        <maven.compiler.source>15</maven.compiler.source>
+        <maven.compiler.target>15</maven.compiler.target>
     </properties>
     <build>
         <plugins>
@@ -15,8 +17,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>14</source>
+                    <target>14</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -27,6 +29,21 @@
                     <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                    <mainClass>serv.RunApp</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -34,10 +51,11 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.2.18</version>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.23</version>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>

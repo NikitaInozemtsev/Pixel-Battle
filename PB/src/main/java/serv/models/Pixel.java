@@ -1,9 +1,6 @@
 package serv.models;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /** —ущность пиксели*/
 @Entity
@@ -11,8 +8,21 @@ import javax.persistence.Table;
 public class Pixel {
     /** ÷вета пикселей*/
     @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int id;
+
     @Column(name = "color")
+    @Lob
     String color;
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
 
     public String getColor() {
         return color;
