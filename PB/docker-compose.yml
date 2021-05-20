@@ -1,12 +1,12 @@
 
 version: '3.2'
 services:
-    mysql_db:
-        container_name: mysql_db
-        image: 'mysql/mysql-server:8.0'
+    postgres_db:
+        container_name: postgres_db
+        image: 'postgres'
         environment:
-            MYSQL_DATABASE: db
-            MYSQL_ROOT_PASSWORD: root
+            POSTGRES_DB: db
+            POSTGRES_PASSWORD: root
             MYSQL_ROOT_HOST: '%'
         ports:
             - '3301:3306'
@@ -15,8 +15,6 @@ services:
         build: .
         ports:
             - '8085:8085'
-        depends_on:
-            mysql_db:
-                condition: service_healthy
+        
             
             
