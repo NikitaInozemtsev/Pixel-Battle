@@ -7,7 +7,6 @@ services:
         environment:
             POSTGRES_DB: db
             POSTGRES_PASSWORD: root
-            MYSQL_ROOT_HOST: '%'
         ports:
             - '3301:3306'
         restart: always
