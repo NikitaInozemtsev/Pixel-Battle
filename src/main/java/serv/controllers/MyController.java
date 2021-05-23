@@ -1,23 +1,20 @@
 package serv.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.CacheControl;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import serv.LZW;
 import serv.models.Pixel;
 import serv.models.User;
 import serv.services.PixelService;
 import serv.services.UserService;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+
+import java.util.List;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /** ”правл€ющий класс*/
 @Controller
@@ -29,6 +26,8 @@ public class MyController {
     /** —ервис пользователей*/
     @Autowired
     private UserService userService;
+
+    private String[] pixels;
 
     /** ћетод возвращающий начальную сраницу
      * @return начальна€ страница*/
@@ -75,7 +74,15 @@ public class MyController {
      * @return пиксели*/
     @RequestMapping(value = "/update", method = RequestMethod.GET)
     public ResponseEntity<String> select() {
-        return new ResponseEntity<String>(pixelService.getPixels().getColor(), HttpStatus.OK);
+        String px = pixelService.getPixels().getColor();
+        List<Integer> arr =  Arrays.asList(px.split(" "))
+                .stream()
+                .mapToInt(Integer::parseInt)
+                .boxed()
+                .collect(Collectors.toList());
+        String decom = LZW.decompress(arr);
+        pixels = decom.split(" ");
+        return new ResponseEntity<String>(px, HttpStatus.OK);
     }
 
     /** ћетод обновл€ющий пиксели в таблице
@@ -83,6 +90,13 @@ public class MyController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
     public void insert(@RequestBody String color) {
-        pixelService.setPixels(new Pixel(color));
+        String[] temp = color.split(" ");
+        pixels[Integer.parseInt(temp[0])] = temp[1];
+        String c = String.join(" ", pixels);
+        c = Arrays.stream(LZW.compress(c).toArray())
+                    .map(String::valueOf)
+                    .reduce((a, b) -> a.concat(" ").concat(b))
+                    .get();
+        pixelService.setPixels(new Pixel(c));
     }
 }
