@@ -1,48 +1,323 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>Pixel</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script
+            src="https://code.jquery.com/jquery-3.6.0.js"
+            integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.css">
+    <link href="/styles.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+    <title>Document</title>
 </head>
-<body>
-.con
-	<script type="text/javascript">
-		
-		async function getRequest() {
+<style>
+    .wrapper {
+        height: 400px;
+        width: 400px;
+        border: 1px solid black;
+    }
+</style>
+<body style="background-color: #1b1b1d;">
+<div class="container bg-secondary text-light">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" style="margin-left: 8%;" href="#">PC</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home <span class="sr-only"></span></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="w-auto p-3 mt-5">
+        <h1 class="align-middle"> some text for testing js</h1>
+    </div>
+    <div class = "wrapper1 w-auto p-3">
+        
+        <div class="wrapper" >
+            <canvas id="canvas" width=400 height=400></canvas>
+        </div>
+
+
+        <h2 id="status">0 | 0</h2>
+
+        <div class="row align-items-center p-2">
+            <input id="color-picker" class="basic col m-2" value='#276cb8'/>
+            <script>
+        $('#color-picker').spectrum({
+        type: "component",
+        showPaletteOnly: "true",
+        showInput: "true"
+        });
+
+        $(".basic").spectrum();
+    </script>
+            <button class="save btn btn-outline-light btn-sm m-2 col">Save</button>
+        </div>
+
+    </div>
+
+    <script>
+
+    $(".basic").on('change.spectrum', function(e, tinycolor) {
+            currColor = tinycolor.toHexString()
+        });
+
+    $(".basic").on('move.spectrum', function(e, tinycolor) {
+            currColor = tinycolor.toHexString()
+    });
+</script>
+
+
+    <script>
+let btn = document.getElementsByClassName("save")[0];
+
+
+
+let canvas = document.getElementById('canvas');
+let ctx = document.getElementById('canvas').getContext('2d');
+var canvasWidth = ctx.canvas.width, canvasHeight = ctx.canvas.height
+var mouseX, mouseY
+var canvasOffsetLeft = ctx.canvasOffsetLeft, canvasOffsetTop = ctx.canvasOffsetTop
+var pixels = []
+var prevX, prevY;
+var factor = 1;
+var image = new Image;
+
+trackTransforms(ctx);
+
+let currColor = "#276cb8"
+
+function initCanvas() {
+
+  ctx.canvas.style.cursor = "crosshair";
+
+}
+
+
+
+function redraw() {
+	var p1 = ctx.transformedPoint(canvasOffsetLeft,canvasOffsetTop);
+
+           
+			var p2 = ctx.transformedPoint(canvasOffsetLeft+canvas.width,canvasOffsetTop+canvas.height);
+        
+			ctx.clearRect(p1.x,p1.y,p2.x-p1.x,p2.y-p1.y);
+
+	for (let i = 0; i < pixels.length; i++) {
+      ctx.fillStyle = pixels[i];
+      y = Math.floor(i / canvasHeight);
+
+      ctx.fillRect(i - canvasWidth * y, y, 1, 1);
+    }
+     
+	ctx.fillStyle = currColor
+	ctx.fillRect(prevX,prevY,1,1)
+
+
+}
+
+
+window.addEventListener('load', function (e) {
+  initCanvas();
+  updateCanvas();
+  setInterval(updateCanvas, 1000);
+})
+
+function saveCanvas(str) {
+
+  postRequest(str);
+
+}
+
+function updateCanvas() {
+  var y
+  let str = getRequest()
+  str.then(data => {
+	var prevPixels = pixels;
+    pixels = data.split(" ");
+	if (prevPixels == null) {
+		for (let i = 0; i < pixels.length; i++) {
+		ctx.fillStyle = pixels[i];
+		y = Math.floor(i / canvasHeight);
+
+		ctx.fillRect(i - (canvasWidth) * y, y, 1, 1);
+		}
+	}
+	else {
+		for (let i = 0; i < pixels.length; i++) {
+			if (pixels[i] != prevPixels[i]) {
+				ctx.fillStyle = pixels[i];
+				y = Math.floor(i / canvasHeight);
+				ctx.fillRect(i - (canvasWidth) * y, y, 1, 1);
+			}
+		}
+	}
+
+	if (prevX && prevY) {
+		ctx.fillStyle = currColor;  	
+  		ctx.fillRect(prevX, prevY, 1, 1);
+	}
+
+
+  });
+
+
+}
+
+
+
+var lastX=canvas.width/2, lastY=canvas.height/2;
+var dragStart,dragged;
+
+
+btn.addEventListener("click", function () {
+	var str = prevX + prevY * canvasWidth + " " + currColor;
+    prevX = undefined;
+    prevY = undefined;
+  saveCanvas(str);
+});
+
+
+
+ctx.canvas.addEventListener('mousemove', function (e) {
+
+  mouseX = e.offsetX || (e.pageX - canvas.offsetLeft)
+  mouseY = e.offsetY || (e.pageY - canvas.offsetTop)
+  let status = document.getElementById('status');
+  status.innerHTML = mouseX + " | " + mouseY;
+
+
+});
+
+ctx.canvas.addEventListener('click', function (e) {
+
+
+  mouseX = e.offsetX || (e.pageX - canvas.offsetLeft)
+  mouseY = e.offsetY || (e.pageY - canvas.offsetTop)
+
+  
+  if (typeof prevX !== 'undefined' && typeof prevY !== 'undefined') {
+    ctx.fillStyle = pixels[prevX + prevY * canvasWidth]
+    ctx.fillRect(prevX, prevY,1,1)
+  }
+  ctx.fillStyle = currColor;
+  prevX = mouseX
+  prevY = mouseY
+
+  ctx.fillRect(mouseX, mouseY, 1, 1);
+
+});
+
+
+
+function trackTransforms(ctx){
+
+		var svg = document.createElementNS("http://www.w3.org/2000/svg",'svg');
+		var xform = svg.createSVGMatrix();
+		ctx.getTransform = function(){ return xform; };
+
+		var savedTransforms = [];
+		var save = ctx.save;
+		ctx.save = function(){
+			savedTransforms.push(xform.translate(0,0));
+			return save.call(ctx);
+		};
+		var restore = ctx.restore;
+		ctx.restore = function(){
+			xform = savedTransforms.pop();
+			return restore.call(ctx);
+		};
+
+		var scale = ctx.scale;
+		ctx.scale = function(sx,sy){
+			xform = xform.scaleNonUniform(sx,sy);
+			return scale.call(ctx,sx,sy);
+		};
+		var rotate = ctx.rotate;
+		ctx.rotate = function(radians){
+			xform = xform.rotate(radians*180/Math.PI);
+			return rotate.call(ctx,radians);
+		};
+		var translate = ctx.translate;
+		ctx.translate = function(dx,dy){
+			xform = xform.translate(dx,dy);
+			return translate.call(ctx,dx,dy);
+		};
+		var transform = ctx.transform;
+		ctx.transform = function(a,b,c,d,e,f){
+			var m2 = svg.createSVGMatrix();
+			m2.a=a; m2.b=b; m2.c=c; m2.d=d; m2.e=e; m2.f=f;
+			xform = xform.multiply(m2);
+			return transform.call(ctx,a,b,c,d,e,f);
+		};
+		var setTransform = ctx.setTransform;
+		ctx.setTransform = function(a,b,c,d,e,f){
+			xform.a = a;
+			xform.b = b;
+			xform.c = c;
+			xform.d = d;
+			xform.e = e;
+			xform.f = f;
+			return setTransform.call(ctx,a,b,c,d,e,f);
+		};
+		var pt  = svg.createSVGPoint();
+		ctx.transformedPoint = function(x,y){
+			pt.x=x; pt.y=y;
+			return pt.matrixTransform(xform.inverse());
+		}
+	}
+
+
+        async function getRequest() {
 			let response = await fetch("/update");
 
-			if (response.ok) { // если HTTP-статус в диапазоне 200-299
-			  // получаем тело ответа (см. про этот метод ниже)
+			if (response.ok) { 
 				var a = await response.text();
 				if(a == "") {
 					for(var i = 0; i < 160000; i++) {
-						a += "#FFFFFF ";
+                            a += "#FFFFFF ";
 					}
 					a = a.substring(0, a.length-1);
-					var bl = lzw_encode(a);
-					postRequest(bl.join(" "));
+					postRequest(lzw_encode(a).join(" "));
+			
+                    return a
 				}
 				else {
 					var res = lzw_decode(a.split(" "));
-					return res;
+					return res
 				}
-			  
+				var a = await response.text();
+		
+				var res = lzw_decode(a.split(" "));
+				return res
+
 			} else {
-			  alert("Ошибка HTTP: " + response.status);
+			  alert("РћС€РёР±РєР° HTTP: " + response.status);
 			}
-			
+
 		}
-		
-		async function postRequest(post) {
-			let response = await fetch('/update', {
-			  method: 'POST',
-			  headers: {
-				'Content-Type': 'text/plain;charset=UTF-8'
-			  },
-			  body: (post)
-			});
+
+        async function postRequest(post) {
+			if (post.substring(0, 3) != "NaN") {
+				let response = await fetch('/update', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'text/plain;charset=UTF-8'
+				},
+				body: (post)
+				});
+			}
 		}
-		
+
 		function lzw_encode(s) {
 		var dict = {};
 		var data = (s + "").split("");
@@ -63,8 +338,8 @@
 			}
 		}
 		out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
-			
-		
+
+
 		return out;
 		}
 
@@ -93,9 +368,11 @@
 			}
 			return out;
 			}
-		
-		getRequest();
-	</script>
 
+
+
+
+</script>
+</div>
 </body>
 </html>

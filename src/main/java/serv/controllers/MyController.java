@@ -27,13 +27,11 @@ public class MyController {
     @Autowired
     private UserService userService;
 
-    private String[] pixels;
-
     /** Метод возвращающий начальную сраницу
      * @return начальная страница*/
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String startPage() {
-        return "newCanvasFrame";
+        return "index";
     }
 
 
@@ -75,13 +73,7 @@ public class MyController {
     @RequestMapping(value = "/update", method = RequestMethod.GET)
     public ResponseEntity<String> select() {
         String px = pixelService.getPixels().getColor();
-        List<Integer> arr =  Arrays.asList(px.split(" "))
-                .stream()
-                .mapToInt(Integer::parseInt)
-                .boxed()
-                .collect(Collectors.toList());
-        String decom = LZW.decompress(arr);
-        pixels = decom.split(" ");
+
         return new ResponseEntity<String>(px, HttpStatus.OK);
     }
 
@@ -90,13 +82,26 @@ public class MyController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
     public void insert(@RequestBody String color) {
-        String[] temp = color.split(" ");
-        pixels[Integer.parseInt(temp[0])] = temp[1];
-        String c = String.join(" ", pixels);
-        c = Arrays.stream(LZW.compress(c).toArray())
+        if (color.length() > 100) {
+            pixelService.savePixels(new Pixel(color));
+        } else {
+            String px = pixelService.getPixels().getColor();
+            List<Integer> arr =  Arrays.asList(px.split(" "))
+                    .stream()
+                    .mapToInt(Integer::parseInt)
+                    .boxed()
+                    .collect(Collectors.toList());
+            String decom = LZW.decompress(arr);
+
+            String[] pixels = decom.split(" ");
+            String[] temp = color.split(" ");
+            pixels[Integer.parseInt(temp[0])] = temp[1];
+            String c = String.join(" ", pixels);
+            c = Arrays.stream(LZW.compress(c).toArray())
                     .map(String::valueOf)
                     .reduce((a, b) -> a.concat(" ").concat(b))
                     .get();
-        pixelService.setPixels(new Pixel(c));
+            pixelService.setPixels(new Pixel(c));
+        }
     }
 }

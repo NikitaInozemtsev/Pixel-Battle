@@ -18,24 +18,17 @@ public class PixelService {
 
     public PixelService(PixelRepository reps) {
         this.reps = reps;
-        if (reps.findAll().isEmpty()) {
-            String ab = "";
-            for(int i = 0; i < 160000; i++) {
-                ab += "#FFFFFF ";
-            }
-            ab = ab.substring(0, ab.length()-1);
-            ab = Arrays.stream(LZW.compress(ab).toArray())
-                    .map(String::valueOf)
-                    .reduce((a, b) -> a.concat(" ").concat(b))
-                    .get();
-            reps.save(new Pixel(ab));
-        }
     }
 
     /** Получение пикселей из таблицы
      * @return пиксели*/
     public Pixel getPixels() {
-        return reps.findAll().get(0);
+        if (reps.findAll().isEmpty()) {
+            return new Pixel("");
+        }
+        else {
+            return reps.findAll().get(0);
+        }
     }
 
     /** Обновление пикселей в таблице
@@ -43,5 +36,12 @@ public class PixelService {
     @Transactional
     public void setPixels(Pixel px) {
         reps.update(px.getColor());
+    }
+
+    /** Сохранение пикселей в таблице. Нужно для первичного заполнения
+     * @param px пиксели
+     */
+    public void savePixels(Pixel px) {
+        reps.save(px);
     }
 }
