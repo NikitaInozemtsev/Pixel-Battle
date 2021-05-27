@@ -6,11 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="ad22cf67-1f2f-435b-bc8c-e81a7a7f7b16" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/serv/controllers/MyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/serv/controllers/MyController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/serv/services/PixelService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/serv/services/PixelService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/newCanvasFrame.html" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,6 +41,7 @@
   <component name="RunAnythingCache">
     <option name="myCommands">
       <command value="mvn compile" />
+      <command value="mvn clean package" />
       <command value="mvn clean" />
       <command value="mvn package" />
     </option>
@@ -91,5 +89,6 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>

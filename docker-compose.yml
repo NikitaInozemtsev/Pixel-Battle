@@ -12,6 +12,8 @@ services:
         restart: always
     spring_db:
         build: .
+        environment:
+            SQL: classpath:/data1.sql
         ports:
             - '8085:8085'
         depends_on:

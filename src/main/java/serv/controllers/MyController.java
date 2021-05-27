@@ -72,9 +72,7 @@ public class MyController {
      * @return пиксели*/
     @RequestMapping(value = "/update", method = RequestMethod.GET)
     public ResponseEntity<String> select() {
-        String px = pixelService.getPixels().getColor();
-
-        return new ResponseEntity<String>(px, HttpStatus.OK);
+        return new ResponseEntity<String>(pixelService.getPixels().getColor(), HttpStatus.OK);
     }
 
     /** ћетод обновл€ющий пиксели в таблице
@@ -85,7 +83,8 @@ public class MyController {
         if (color.length() > 100) {
             pixelService.savePixels(new Pixel(color));
         } else {
-            String px = pixelService.getPixels().getColor();
+            Pixel pixel = pixelService.getPixels();
+            String px = pixel.getColor();
             List<Integer> arr =  Arrays.asList(px.split(" "))
                     .stream()
                     .mapToInt(Integer::parseInt)
@@ -101,7 +100,15 @@ public class MyController {
                     .map(String::valueOf)
                     .reduce((a, b) -> a.concat(" ").concat(b))
                     .get();
-            pixelService.setPixels(new Pixel(c));
+            pixel.setColor(c);
+            pixelService.setPixels(pixel);
+            pixel = null;
+            px = null;
+            arr = null;
+            decom = null;
+            pixels = null;
+            temp = null;
+            c = null;
         }
     }
 }
